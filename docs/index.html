@@ -1,60 +1,529 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Zohran Mamdani Policy Impact Simulator</title>
+  <meta charset="UTF-8" />
+  <title>Zohran Mamdani Policy Impact Simulator • Divyansh Mangal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="A quantitative Python project by Divyansh Mangal simulating the economic impact of rent freeze and free-bus policies."
+  />
+
+  <!-- Google Font similar to your main site -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
   <style>
+    :root {
+      --bg: #05060a;
+      --card-bg: #0b0d16;
+      --card-soft: #10121f;
+      --accent: #12f7d6;
+      --accent-soft: rgba(18, 247, 214, 0.1);
+      --text-main: #f5f5f7;
+      --text-muted: #9fa3b4;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-      line-height: 1.6;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #181b33 0, #05060a 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px;
     }
-    img {
-      max-width: 100%;
-      border: 1px solid #ddd;
-      margin: 10px 0;
+
+    .page {
+      max-width: 1100px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1.5fr);
+      gap: 24px;
     }
-    h1, h2 {
-      color: #2c3e50;
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: linear-gradient(145deg, #090b14, #05060c);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 24px 24px 20px;
+    }
+
+    .left-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 24px;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .left-card {
+        position: static;
+      }
+    }
+
+    .name {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .role {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(18, 247, 214, 0.4);
+      background: rgba(18, 247, 214, 0.06);
+      color: var(--accent);
+      width: fit-content;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(18, 247, 214, 0.8);
+    }
+
+    .meta-block {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 8px;
+      column-gap: 12px;
+      font-size: 0.8rem;
+    }
+
+    .meta-label {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .meta-value {
+      font-size: 0.9rem;
+    }
+
+    .nav-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .nav-chip {
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease-out;
+    }
+
+    .nav-chip:hover {
+      border-color: rgba(18, 247, 214, 0.6);
+      color: var(--accent);
+      background: rgba(18, 247, 214, 0.05);
+    }
+
+    .nav-chip.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .right-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section {
+      background: rgba(7, 8, 18, 0.9);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 20px 20px 18px;
+    }
+
+    .section + .section {
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .section-title span {
+      color: var(--accent);
+    }
+
+    .section p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .section ul {
+      padding-left: 18px;
+      margin: 6px 0 2px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .section ul li + li {
+      margin-top: 3px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      font-size: 0.74rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    @media (min-width: 800px) {
+      .charts-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .chart-card {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: radial-gradient(circle at top, #181b33 0, #05060a 70%);
+    }
+
+    .chart-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .chart-caption {
+      font-size: 0.8rem;
+      padding: 8px 10px 10px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .code-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(18, 247, 214, 0.5);
+      background: rgba(18, 247, 214, 0.06);
+      transition: all 0.15s ease-out;
+    }
+
+    .code-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .code-link svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .footer-note {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    a {
+      color: var(--accent);
     }
   </style>
 </head>
 <body>
+  <div class="page">
+    <!-- Left column / profile-style card -->
+    <aside class="card left-card">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        PROJECT SNAPSHOT
+      </div>
 
-<h1>Zohran Mamdani Policy Impact Simulator</h1>
+      <div>
+        <div class="name">Zohran Mamdani Policy Impact Simulator</div>
+        <div class="role">Quant-style economic modelling • by Divyansh Mangal</div>
+      </div>
 
-<p>
-This project simulates the economic impact of two policy ideas associated with Zohran Mamdani:
-</p>
+      <div class="meta-block">
+        <div>
+          <div class="meta-label">Author</div>
+          <div class="meta-value">Divyansh Mangal</div>
+        </div>
+        <div>
+          <div class="meta-label">Stack</div>
+          <div class="meta-value">Python, Matplotlib</div>
+        </div>
+        <div>
+          <div class="meta-label">Focus</div>
+          <div class="meta-value">Policy & Economics</div>
+        </div>
+        <div>
+          <div class="meta-label">Type</div>
+          <div class="meta-value">Personal Project</div>
+        </div>
+      </div>
 
-<ul>
-  <li><strong>Rent Freeze</strong> – estimates tenant savings and landlord revenue loss.</li>
-  <li><strong>Free Buses</strong> – estimates passenger savings, MTA ticket revenue loss, and taxi driver income loss.</li>
-</ul>
+      <div>
+        <div class="meta-label" style="margin-bottom: 4px;">Sections</div>
+        <div class="nav-chips">
+          <a href="#overview" class="nav-chip active">Overview</a>
+          <a href="#methodology" class="nav-chip">Methodology</a>
+          <a href="#results" class="nav-chip">Results</a>
+          <a href="#run" class="nav-chip">How to run</a>
+        </div>
+      </div>
 
-<h2>Methodology</h2>
-<p>
-Using simple parameter-based models in Python, the simulator applies assumptions such as:
-number of units, average rents, daily trips, fares, and behaviour shifts from taxis to buses.
-It then computes estimated gains and losses and visualises them with charts.
-</p>
+      <div>
+        <div class="meta-label" style="margin-bottom: 4px;">Links</div>
+        <a
+          class="code-link"
+          href="https://github.com/divyxnsh22/Zohran-Mamdani-s-Policy-Impact-Simulator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M9.5 3A1.5 1.5 0 0 0 8 4.5v3a1 1 0 1 0 2 0V5h9v14H10v-2.5a1 1 0 1 0-2 0V19.5A1.5 1.5 0 0 0 9.5 21h10A1.5 1.5 0 0 0 21 19.5v-15A1.5 1.5 0 0 0 19.5 3h-10Z"
+            />
+            <path
+              fill="currentColor"
+              d="M5.21 8.21a1 1 0 0 0-1.42 1.42L6.59 12H3a1 1 0 1 0 0 2h3.59l-2.8 2.79a1 1 0 1 0 1.42 1.42l4.5-4.5a1 1 0 0 0 0-1.42l-4.5-4.5Z"
+            />
+          </svg>
+          View source on GitHub
+        </a>
+      </div>
 
-<h2>Rent Freeze Results</h2>
-<p>Example output chart based on current assumptions:</p>
-<img src="docs/images/rent_freeze_impact.png" alt="Rent Freeze Impact">
+      <div class="footer-note">
+        This page is a lightweight project view to match the style of
+        <a href="https://divyanshmangal.world" target="_blank" rel="noreferrer">
+          divyanshmangal.world
+        </a>.
+      </div>
+    </aside>
 
-<h2>Free Bus Results</h2>
-<p>Example output chart based on current assumptions:</p>
-<img src="docs/images/free_buses_impact.png" alt="Free Buses Impact">
+    <!-- Right column / main content -->
+    <main class="right-card">
+      <section class="section" id="overview">
+        <h2 class="section-title"><span>Overview</span></h2>
+        <p>
+          This project is a small quantitative simulator that asks a simple question:
+          <strong>
+            “What happens to different groups when certain popular policy ideas are implemented?”
+          </strong>
+        </p>
+        <p>
+          Focusing on proposals associated with Zohran Mamdani, the simulator models two
+          scenarios:
+        </p>
+        <ul>
+          <li>
+            <strong>Rent freeze</strong> – tenants pay the same rent for a set period instead of
+            facing normal yearly increases.
+          </li>
+          <li>
+            <strong>Free buses</strong> – bus fares are removed, changing costs for passengers,
+            public transport, and taxi drivers.
+          </li>
+        </ul>
+        <p>
+          The goal is <em>not</em> to take a political side, but to practice thinking like a
+          quant: define assumptions, run calculations, and see how the numbers move for each
+          group.
+        </p>
+        <div class="tag-row">
+          <span class="tag">Quant-style thinking</span>
+          <span class="tag">Policy analysis</span>
+          <span class="tag">Simulation</span>
+          <span class="tag">Student project</span>
+        </div>
+      </section>
 
-<h2>Source Code</h2>
-<p>
-<a href="https://github.com/divyxnsh22/Zohran-Mamdani-s-Policy-Impact-Simulator" target="_blank">
-View the full code on GitHub
-</a>
-</p>
+      <section class="section" id="methodology">
+        <h2 class="section-title"><span>Methodology</span></h2>
+        <p>The simulator is built as a small, parameter-based Python model:</p>
+        <ul>
+          <li>
+            For the <strong>rent freeze</strong>, it uses assumptions like:
+            number of rent-stabilised units, average monthly rent, normal yearly increase, and
+            freeze duration. From this, it estimates total tenant savings and landlord revenue
+            loss.
+          </li>
+          <li>
+            For <strong>free buses</strong>, it uses:
+            daily bus trips, average bus fare, daily taxi trips, average taxi fare, and a
+            percentage of taxi users who might switch to free buses. From this, it estimates
+            passenger savings, MTA ticket revenue loss, and taxi driver income loss.
+          </li>
+        </ul>
+        <p>
+          Under the hood, everything is simple arithmetic plus basic sensitivity analysis.
+          You can tweak parameters in the code to explore “what if” scenarios.
+        </p>
+      </section>
 
+      <section class="section" id="results">
+        <h2 class="section-title"><span>Results & Visuals</span></h2>
+        <p>
+          The project currently generates static charts that illustrate how benefits and losses
+          move across different groups. Below are example outputs based on the default
+          assumptions in the code:
+        </p>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <img
+              src="images/rent_freeze_impact.png"
+              alt="Rent freeze impact chart"
+            />
+            <div class="chart-caption">
+              Estimated total tenant savings vs. landlords’ revenue loss for different rent
+              freeze durations.
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <img
+              src="images/free_buses_impact.png"
+              alt="Free buses impact chart"
+            />
+            <div class="chart-caption">
+              Estimated passenger savings, MTA ticket revenue loss, and taxi drivers’ income
+              loss when buses are made free.
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 10px;">
+          As I refine the project, I plan to plug in more realistic figures and possibly build a
+          small interactive front-end where parameters can be adjusted with sliders.
+        </p>
+      </section>
+
+      <section class="section" id="run">
+        <h2 class="section-title"><span>How to run the project</span></h2>
+        <p>Basic steps to run the simulator locally:</p>
+        <ul>
+          <li>Clone the repository from GitHub.</li>
+          <li>Install Python 3 and dependencies from <code>requirements.txt</code>.</li>
+          <li>Run <code>main.py</code> to generate the numbers and charts.</li>
+        </ul>
+        <p>Summary:</p>
+        <ul>
+          <li><code>rent_freeze_analysis.py</code> – logic for rent freeze modelling.</li>
+          <li><code>free_buses_analysis.py</code> – logic for free buses and taxi impact.</li>
+          <li><code>main.py</code> – prints a summary and saves charts into the images folder.</li>
+        </ul>
+        <p>
+          The code is intentionally kept simple and heavily parameterised so it can be extended
+          later with real-world datasets (e.g., MTA reports, NYC housing data).
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // tiny script to update active nav chip on scroll
+    const sections = document.querySelectorAll("main .section");
+    const chips = document.querySelectorAll(".nav-chip");
+
+    function onScroll() {
+      let current = null;
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 140 && rect.bottom >= 140) {
+          current = section.id;
+        }
+      });
+
+      if (!current) return;
+
+      chips.forEach((chip) => {
+        if (chip.getAttribute("href") === "#" + current) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+    }
+
+    document.addEventListener("scroll", onScroll);
+  </script>
 </body>
 </html>
