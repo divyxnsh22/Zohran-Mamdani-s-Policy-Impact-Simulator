@@ -1,4 +1,4 @@
-# Zohran Mamdani's Policy Impact Simulator
+# Zohran Mamdani's Policy Impact Simulator by Divyansh Mangal
 
 A small Python project that simulates the economic impact of two policy ideas:
 
@@ -25,6 +25,8 @@ nyc-policy-impact-simulator/
 ├── main.py
 ├── requirements.txt
 ├── README.md
+├── docs/
+|    ├── index.html
 └── images/
     ├── rent_freeze_impact.png
     └── free_buses_impact.png
