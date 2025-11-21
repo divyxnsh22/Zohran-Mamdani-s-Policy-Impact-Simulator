@@ -19,18 +19,17 @@ It then visualizes the results using `matplotlib`.
 ## Project Structure
 
 ```text
-nyc-policy-impact-simulator/
+Zohran-Mamdani-s-Policy-Impact-Simulator/
+├── docs/
+│   └── index.html
+├── images/
+│   ├── rent_freeze_impact.png
+│   └── free_buses_impact.png
+├── main.py
 ├── rent_freeze_analysis.py
 ├── free_buses_analysis.py
-├── main.py
-├── requirements.txt
 ├── README.md
-├── docs/
-|    ├── index.html
-└── images/
-    ├── rent_freeze_impact.png
-    └── free_buses_impact.png
-
+└── requirements.txt
 
 
 Sources: NYC.gov, MTA, CBS News, WSJ, NY Times and more
